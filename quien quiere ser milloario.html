@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Millonario Quiz: Desafío Académico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@400;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold-primary: #ffd700;
+  --gold-glow: #ffae00;
+  --blue-dark: #030826;
+  --blue-card: #091548;
+  --blue-border: #1d3cb5;
+  --blue-glow: #46d6ff;
+  --green-ok: #00e676;
+  --red-bad: #ff2a6d;
+  --ease-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  color: #fff;
+  background: radial-gradient(circle at 50% 30%, #102473 0%, #060e36 50%, #020514 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.bg-stage {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.spotlight {
+  position: absolute;
+  top: -20%;
+  width: 40vw;
+  height: 140vh;
+  background: linear-gradient(180deg, rgba(70,214,255,0.15) 0%, rgba(0,0,0,0) 100%);
+  transform-origin: top center;
+  filter: blur(30px);
+}
+.spotlight.left { left: 10%; transform: rotate(-25deg); animation: beamL 8s ease-in-out infinite alternate; }
+.spotlight.right { right: 10%; transform: rotate(25deg); animation: beamR 8s ease-in-out infinite alternate; }
+
+@keyframes beamL { 0% { transform: rotate(-30deg); opacity: 0.4; } 100% { transform: rotate(-15deg); opacity: 0.8; } }
+@keyframes beamR { 0% { transform: rotate(30deg); opacity: 0.4; } 100% { transform: rotate(15deg); opacity: 0.8; } }
+
+#intro {
+  position: relative;
+  z-index: 2;
+  width: min(920px, 95vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+  padding: 30px 20px;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.logo-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-circle {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1a3299 0%, #081140 70%, #030720 100%);
+  border: 4px solid var(--blue-glow);
+  box-shadow: 0 0 35px var(--blue-glow), inset 0 0 25px rgba(0,0,0,0.8);
+}
+
+.logo-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: spinSlow 40s linear infinite;
+}
+
+.logo-text {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo-text h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 24px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.8), 0 0 20px var(--blue-glow);
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.logo-text span {
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gold-primary);
+  text-shadow: 0 0 10px var(--gold-glow);
+  letter-spacing: 6px;
+}
+
+.main-question-box {
+  background: rgba(9, 21, 72, 0.75);
+  border: 2px solid var(--gold-primary);
+  border-radius: 20px;
+  padding: 20px 30px;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.25), inset 0 0 15px rgba(255, 215, 0, 0.1);
+  backdrop-filter: blur(10px);
+  max-width: 800px;
+}
+
+.question-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(18px, 2.8vw, 24px);
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 0 20px rgba(255,215,0,0.5);
+  line-height: 1.4;
+}
+
+.areas-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+
+.areas-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--blue-glow);
+  font-weight: 700;
+}
+
+.areas-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.area-badge {
+  background: linear-gradient(135deg, rgba(29,60,181,0.6) 0%, rgba(9,21,72,0.8) 100%);
+  border: 1px solid var(--blue-glow);
+  border-radius: 30px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.game-info-card {
+  display: flex;
+  gap: 25px;
+  background: rgba(3, 8, 38, 0.8);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 15px;
+  padding: 10px 25px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.info-item { display: flex; align-items: center; gap: 8px; color: #ddd; }
+.info-item b { color: var(--gold-primary); font-size: 17px; }
+
+.btn-start {
+  background: linear-gradient(180deg, #ffe066 0%, #e69d00 50%, #995c00 100%);
+  color: #030826;
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 900;
+  padding: 15px 50px;
+  border: 2px solid #fff;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(255,215,0,0.6), 0 8px 0 #663d00;
+  letter-spacing: 2px;
+  transition: all 0.2s var(--ease-elastic);
+}
+
+.btn-start:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 0 45px var(--gold-primary), 0 12px 0 #663d00;
+}
+
+#game {
+  position: relative;
+  z-index: 2;
+  width: min(1150px, 96vw);
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 20px;
+  align-items: center;
+}
+
+.tv-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+}
+
+.status-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(9, 21, 72, 0.8);
+  border: 1px solid var(--blue-border);
+  border-radius: 15px;
+  padding: 10px 20px;
+}
+
+.category-tag {
+  background: var(--gold-primary);
+  color: #000;
+  font-weight: 800;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.timer-box {
+  background: rgba(255, 42, 109, 0.2);
+  border: 2px solid var(--red-bad);
+  padding: 4px 15px;
+  border-radius: 20px;
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: 900;
+  color: #ff7675;
+  box-shadow: 0 0 10px rgba(255, 42, 109, 0.4);
+}
+.timer-box.warning {
+  animation: pulseWarning 0.5s infinite alternate;
+}
+@keyframes pulseWarning {
+  from { transform: scale(1); border-color: var(--red-bad); }
+  to { transform: scale(1.1); border-color: #fff; color: #fff; }
+}
+
+.question-hex {
+  width: 100%;
+  position: relative;
+  background: linear-gradient(180deg, #0d1e63 0%, #050c30 100%);
+  border: 2px solid var(--gold-primary);
+  border-radius: 12px;
+  padding: 22px 30px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0,0,0,0.8), inset 0 0 15px rgba(70,214,255,0.2);
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.question-text {
+  font-size: clamp(15px, 1.8vw, 19px);
+  font-weight: 700;
+  line-height: 1.4;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.answers-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 22px;
+  position: relative;
+}
+
+.answers-grid::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -20px;
+  right: -20px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--blue-border), var(--blue-glow), var(--blue-border), transparent);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.opt-btn {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(180deg, #0a174f 0%, #030826 100%);
+  border: 2px solid #3b5bdb;
+  border-radius: 35px;
+  padding: 12px 18px;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  line-height: 1.3;
+}
+
+.opt-btn b {
+  color: var(--gold-primary);
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+}
+
+.opt-btn:hover:not(:disabled) {
+  background: linear-gradient(180deg, #182e8e 0%, #091548 100%);
+  border-color: var(--blue-glow);
+  box-shadow: 0 0 20px var(--blue-glow);
+  transform: scale(1.02);
+}
+
+.opt-btn.selected {
+  background: linear-gradient(180deg, #e69d00 0%, #995c00 100%) !important;
+  border-color: #fff !important;
+  color: #000 !important;
+  box-shadow: 0 0 25px var(--gold-primary) !important;
+  transform: scale(1.03);
+}
+.opt-btn.selected b { color: #000; }
+
+.opt-btn.correct {
+  background: linear-gradient(180deg, #00b894 0%, #006266 100%) !important;
+  border-color: #55efc4 !important;
+  color: #fff !important;
+  box-shadow: 0 0 30px var(--green-ok) !important;
+  animation: pulseOk 0.6s infinite alternate;
+}
+
+.opt-btn.wrong {
+  background: linear-gradient(180deg, #d63031 0%, #831010 100%) !important;
+  border-color: #ff7675 !important;
+  color: #fff !important;
+  animation: shake 0.5s ease;
+}
+
+.opt-btn.hidden-50 {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.8);
+}
+
+@keyframes pulseOk { 0% { transform: scale(1); } 100% { transform: scale(1.04); } }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-10px); }
+  40%, 80% { transform: translateX(10px); }
+}
+
+.action-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-retire {
+  background: linear-gradient(180deg, #d63031 0%, #721c24 100%);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 22px;
+  border: 1px solid #ff7675;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-retire:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--red-bad); }
+
+.btn-confirm {
+  background: linear-gradient(180deg, #46d6ff 0%, #1d3cb5 100%);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 11px 32px;
+  border: 1px solid #fff;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(70,214,255,0.4);
+  transition: all 0.2s;
+}
+
+.btn-confirm:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px var(--blue-glow);
+}
+.btn-confirm:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
+
+.sidebar {
+  background: rgba(9, 21, 72, 0.85);
+  border: 2px solid var(--blue-border);
+  border-radius: 20px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.6);
+}
+
+.lifelines-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.lifeline-btn {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #102473 0%, #030826 100%);
+  border: 2px solid var(--blue-glow);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s;
+  box-shadow: 0 0 10px rgba(70,214,255,0.3);
+}
+
+.lifeline-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 20px var(--gold-primary);
+}
+
+.lifeline-btn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+  border-color: #555;
+  position: relative;
+}
+
+.lifeline-btn:disabled::after {
+  content: '✕';
+  position: absolute;
+  color: var(--red-bad);
+  font-size: 26px;
+}
+
+.ladder-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 3px;
+}
+
+.ladder-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold-primary);
+  border: 1px solid transparent;
+  transition: all 0.3s;
+}
+
+.ladder-item.done { color: rgba(255,255,255,0.4); }
+.ladder-item.active {
+  background: linear-gradient(90deg, var(--gold-primary) 0%, #e69d00 100%);
+  color: #000;
+  font-size: 13px;
+  box-shadow: 0 0 15px var(--gold-primary);
+  transform: scale(1.03);
+}
+
+.feedback-toast {
+  position: fixed;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  background: linear-gradient(135deg, var(--gold-primary), #ff9100);
+  color: #000;
+  font-family: 'Cinzel', serif;
+  font-size: 30px;
+  font-weight: 900;
+  padding: 15px 35px;
+  border-radius: 50px;
+  box-shadow: 0 0 50px var(--gold-primary), 0 10px 0 #884400;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.4s var(--ease-elastic);
+}
+
+.feedback-toast.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 5, 20, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-box {
+  background: linear-gradient(180deg, #0d1e63 0%, #030826 100%);
+  border: 3px solid var(--gold-primary);
+  border-radius: 25px;
+  padding: 30px;
+  max-width: 550px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 50px rgba(255,215,0,0.3);
+  animation: popIn 0.4s var(--ease-elastic);
+}
+
+.check-card {
+  background: linear-gradient(135deg, #fffdf0 0%, #fceabb 50%, #f8b500 100%);
+  color: #2b1d00;
+  border: 6px double #8a6400;
+  border-radius: 18px;
+  padding: 25px 20px;
+  text-align: left;
+  box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.check-card h2 {
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 24px;
+  color: #5e4300;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #8a6400;
+  padding-bottom: 6px;
+}
+
+.check-payee { font-size: 12px; font-weight: 800; color: #4a3700; text-transform: uppercase; }
+.check-name { font-size: 18px; font-weight: 900; color: #102473; margin-bottom: 8px; }
+
+.check-amount-box {
+  background: #fff;
+  border: 3px solid #102473;
+  padding: 6px 15px;
+  display: inline-block;
+  font-family: 'Cinzel', serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: #008744;
+  border-radius: 8px;
+  margin: 8px 0;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.academic-reward {
+  background: rgba(16, 36, 115, 0.1);
+  border-left: 4px solid #008744;
+  padding: 8px 12px;
+  margin: 10px 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: #0d1e63;
+}
+
+.check-signature-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 15px;
+}
+
+.check-sig {
+  font-family: 'Great Vibes', cursive;
+  font-size: 30px;
+  color: #102473;
+  border-top: 1px solid #8a6400;
+  padding-top: 2px;
+  width: 180px;
+  text-align: center;
+}
+
+.check-seal {
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, #ff416c, #8a0022);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 26px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  border: 2px dashed #ffb3c1;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+
+.hide { display: none !important; }
+
+#confetti-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99;
+}
+
+@media(max-width: 850px) {
+  #game { grid-template-columns: 1fr; }
+  .sidebar { order: -1; }
+  .answers-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-stage">
+  <div class="spotlight left"></div>
+  <div class="spotlight right"></div>
+</div>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div id="feedback" class="feedback-toast">¡EXCELENTE!</div>
+
+<!-- PANTALLA DE INICIO -->
+<section id="intro">
+  <div class="logo-container">
+    <div class="logo-circle"></div>
+    <svg class="logo-svg" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="42" fill="none" stroke="#ffc83d" stroke-width="1.5" stroke-dasharray="4 3" />
+    </svg>
+    <div class="logo-text">
+      <h1>MILLONARIO</h1>
+      <span>QUIZ</span>
+    </div>
+  </div>
+
+  <div class="main-question-box">
+    <h2 class="question-title">Desafío Académico: Filosofía Latinoamericana, Conflicto Armado, Bioética y Teología</h2>
+  </div>
+
+  <div class="areas-container">
+    <span class="areas-label">Ejes temáticos principales:</span>
+    <div class="areas-grid">
+      <div class="area-badge">🧠 Fil. Latinoamericana</div>
+      <div class="area-badge">🌍 Grupos Armados Colombia</div>
+      <div class="area-badge">⚖️ Bioética Fundamental</div>
+      <div class="area-badge">🕊️ Biblia y Teología</div>
+    </div>
+  </div>
+
+  <div class="game-info-card">
+    <div class="info-item"><span>Preguntas:</span> <b>10</b></div>
+    <div class="info-item"><span>Tiempo/Pregunta:</span> <b>40s</b></div>
+    <div class="info-item"><span>Premio Máximo:</span> <b>50.000 Pts</b></div>
+  </div>
+
+  <button class="btn-start" onclick="startGame()">¡INICIAR EL RETO!</button>
+</section>
+
+<!-- PANTALLA DE JUEGO -->
+<section id="game" class="hide">
+  <div class="tv-stage">
+    <div class="status-bar">
+      <span class="category-tag" id="cat-tag">ÁREA</span>
+      <div class="timer-box" id="timer-box">⏱️ 40s</div>
+    </div>
+
+    <div class="question-hex">
+      <p class="question-text" id="q-text">Cargando pregunta...</p>
+    </div>
+
+    <div class="answers-grid" id="opts-container"></div>
+
+    <div class="action-bar">
+      <button class="btn-retire" id="btn-retire" onclick="promptRetire()">RETIRARME</button>
+      <button class="btn-confirm" id="btn-send" disabled onclick="submitAnswer()">ÚLTIMA PALABRA</button>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="lifelines-container">
+      <button class="lifeline-btn" id="btn-50" onclick="use5050()" title="50:50">50%</button>
+      <button class="lifeline-btn" id="btn-aud" onclick="useAudience()" title="Audiencia">👥</button>
+      <button class="lifeline-btn" id="btn-tel" onclick="usePhone()" title="Consejo Expertos">📞</button>
+    </div>
+
+    <ul class="ladder-list" id="ladder"></ul>
+  </div>
+</section>
+
+<!-- MODAL -->
+<div id="modal" class="modal-overlay hide">
+  <div id="modal-content" class="modal-box"></div>
+</div>
+
+<script>
+// BANCO DE PREGUNTAS CON OPCIONES DE RESPUETA REDISEÑADAS (DESAFIANTES Y ANALÍTICAS)
+const MASTER_QUESTIONS = [
+  {
+    c: "🧠 Fil. Latinoamericana",
+    q: "¿Cuál ha sido uno de los propósitos centrales de la Filosofía Latinoamericana como corriente de pensamiento?",
+    o: [
+      "Analizar la realidad social e histórica de la región para construir un pensamiento autónomo frente a la dominación cultural.",
+      "Desarrollar teorías abstractas sobre el origen del universo desligadas de la realidad social de los pueblos.",
+      "Demostrar que los métodos filosóficos clásicos son los únicos válidos para interpretar la política regional.",
+      "Promover la adopción estricta de los modelos económicos coloniales para garantizar el progreso académico."
+    ],
+    a: 0,
+    h: "Busca analizar nuestra propia identidad y emanciparnos de la dependencia cultural."
+  },
+  {
+    c: "🌍 Grupos Armados Colombia",
+    q: "El periodo conocido como 'La Violencia' en Colombia (mitad del siglo XX) se caracterizó políticamente por:",
+    o: [
+      "La confrontación bipartidista armada entre liberales y conservadores que desembocó en las primeras guerrillas campesinas.",
+      "El enfrentamiento exclusivo entre las Fuerzas Militares y los carteles del narcotráfico en las principales ciudades.",
+      "Un conflicto motivado únicamente por disputas territoriales fronterizas con países vecinos.",
+      "Una huelga general de trabajadores urbanos que derrocó Pacíficamente las instituciones estatales."
+    ],
+    a: 0,
+    h: "Se intensificó radicalmente tras el asesinato del líder político Jorge Eliécer Gaitán en 1948."
+  },
+  {
+    c: "⚖️ Bioética Fundamental",
+    q: "En el contexto de la Bioética, el 'Consentimiento Informado' se define éticamente como:",
+    o: [
+      "La decisión autónoma del paciente para aceptar o rechazar un procedimiento tras comprender sus riesgos y beneficios.",
+      "Un documento legal que firma el médico para deslindarse de cualquier tipo de responsabilidad clínica.",
+      "El permiso que otorga la institución hospitalaria para poder realizar investigaciones con nuevos fármacos.",
+      "La autorización obligatoria que la familia debe dar sobre el tratamiento aun cuando el paciente esté consciente."
+    ],
+    a: 0,
+    h: "Protege de manera directa el principio bioético de la Autonomía del paciente."
+  },
+  {
+    c: "🕊️ Biblia y Teología",
+    q: "La 'Alianza' del Sinaí narrada en el Antiguo Testamento se distingue de otros pactos de la antigüedad porque:",
+    o: [
+      "Vincula la fidelidad a Dios con el cumplimiento de leyes morales orientadas a la justicia social y el respeto al prójimo.",
+      "Garantizaba victorias militares automáticas e incondicionales sin importar la conducta moral del pueblo.",
+      "Exigía únicamente el pago de tributos materiales en el templo sin demandar cambios en el comportamiento ético.",
+      "Prometía la prosperidad económica a las familias ricas excluyendo a las clases desfavorecidas."
+    ],
+    a: 0,
+    h: "Relaciona de forma indisoluble el culto religioso con la justicia hacia la comunidad."
+  },
+  {
+    c: "🧠 Fil. Latinoamericana",
+    q: "El filósofo peruano Augusto Salazar Bondy argumentaba que la filosofía en América Latina padecía de 'inautenticidad' debido a que:",
+    o: [
+      "Reproducía modelos teóricos extranjeros sin transformar la situación subdesarrollada y dependiente de la región.",
+      "Los pensadores latinoamericanos escribían sus textos utilizando métodos científicos demasiado complejos.",
+      "Rechazaba el estudio de la historia y se centraba únicamente en las lenguas originarias de América.",
+      "Se negaba a participar en los debates políticos sobre la educación pública y los derechos humanos."
+    ],
+    a: 0,
+    h: "Señala que la alienación cultural es un reflejo directo de la dependencia económica."
+  },
+  {
+    c: "🌍 Grupos Armados Colombia",
+    q: "El Frente Nacional (1958-1974) logró detener la lucha bipartidista, pero generó nuevas tensiones sociales debido a que:",
+    o: [
+      "Cerró el sistema político al alternar el poder únicamente entre los dos partidos tradicionales, excluyendo a la oposición.",
+      "Aumentó los impuestos a la producción agrícola causando la quiebra masiva de los grandes hacendados.",
+      "Eliminó la propiedad privada y nacionalizó las principales industrias del país.",
+      "Permitió la participación de grupos revolucionarios en el Congreso de la República sin restricciones."
+    ],
+    a: 0,
+    h: "Al clausurar la competencia electoral a nuevas ideas, impulsó el surgimiento de guerrillas de izquierda."
+  },
+  {
+    c: "⚖️ Bioética Fundamental",
+    q: "El principio bioético de 'No Maleficencia' impone al profesional de la salud la obligación de:",
+    o: [
+      "Evitar intervenciones médicas o tratamientos que generen sufrimientos o daños innecesarios al paciente.",
+      "Garantizar que todo procedimiento médico sea completamente gratuito para la población vulnerable.",
+      "Aplicar tratamientos experimentales aun si el paciente se opone expresamente a ellos.",
+      "Priorizar la reducción de costos operativos sobre la calidad de los insumos clínicos."
+    ],
+    a: 0,
+    h: "Representa el deber supremo reflejado en el clásico axioma: 'Ante todo, no hacer daño'."
+  },
+  {
+    c: "🕊️ Biblia y Teología",
+    q: "En el Libro de Job, el problema del sufrimiento del inocente se resuelve teológicamente al demostrarse que:",
+    o: [
+      "El dolor no siempre es un castigo divino por el pecado, cuestionando la visión simplista de la retribución moral.",
+      "El sufrimiento es una ilusión provocada por la falta de sacrificios rituales en el templo.",
+      "Dios carece del poder necesario para intervenir cuando las personas buenas enfrentan calamidades.",
+      "Toda persona que padece una desgracia ha cometido necesariamente un delito grave en secreto."
+    ],
+    a: 0,
+    h: "Rompe con la idea tradicional de que a las personas buenas solo les ocurren cosas prósperas."
+  },
+  {
+    c: "🌍 Grupos Armados Colombia",
+    q: "A partir de la década de 1990, la consolidación del paramilitarismo en Colombia mediante las AUC se diferenció por:",
+    o: [
+      "Su expansión nacional financiada por el narcotráfico y su estrecha injerencia en la política local y regional.",
+      "Ser un grupo pacífico dedicado exclusivamente a la defensa de reservas ambientales en zonas rurales.",
+      "Un movimiento urbano que buscaba el desarme voluntario de los carteles de Medellín y Cali.",
+      "Su alianza exclusiva con las guerrillas de izquierda para combatir la corrupción estatal."
+    ],
+    a: 0,
+    h: "Articuló ejércitos privados contrainsurgentes con recursos del tráfico de drogas e influencia política."
+  },
+  {
+    c: "🧠 Fil. Latinoamericana",
+    q: "En la 'Filosofía de la Liberación' de Enrique Dussel, la categoría de 'El Otro' representa fundamentalmente a:",
+    o: [
+      "Las personas y colectivos históricamente excluidos y marginados por los centros dominantes de poder.",
+      "Las élites económicas que dirigen las grandes corporaciones multilaterales.",
+      "Los pensadores que defienden la supremacía del eurocentrismo en las universidades.",
+      "Los organismos internacionales encargados de regular el comercio global."
+    ],
+    a: 0,
+    h: "Propone reflexionar y actuar a partir de la realidad y las necesidades de las víctimas del sistema."
+  }
+];
+
+const SCORES = ["1.000", "2.000", "3.000", "5.000", "10.000", "15.000", "20.000", "30.000", "40.000", "50.000"];
+const LETTERS = ["A", "B", "C", "D"];
+const PRAISES = ["¡EXCELENTE!", "¡DOMINIO TOTAL!", "¡CÁTEDRA PURA!", "¡BRILLANTE!", "¡SABIDURÍA!"];
+
+let gameQuestions = [];
+let currentStep = 0;
+let selectedOption = null;
+let isLocked = false;
+let lifelinesUsed = { f: false, a: false, t: false };
+let hiddenIndices = [];
+
+// Cronómetro de 40 segundos
+let timerInterval = null;
+let timeLeft = 40;
+
+const $ = id => document.getElementById(id);
+
+function shuffle(array) {
+  let arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startGame() {
+  $("intro").classList.add("hide");
+  $("game").classList.remove("hide");
+  closeModal();
+
+  lifelinesUsed = { f: false, a: false, t: false };
+  $("btn-50").disabled = false;
+  $("btn-aud").disabled = false;
+  $("btn-tel").disabled = false;
+
+  let rawShuffled = shuffle(MASTER_QUESTIONS);
+  gameQuestions = rawShuffled.map(item => {
+    let indices = shuffle([0, 1, 2, 3]);
+    return {
+      c: item.c,
+      q: item.q,
+      h: item.h,
+      o: indices.map(idx => item.o[idx]),
+      a: indices.indexOf(item.a)
+    };
+  });
+
+  currentStep = 0;
+  renderQuestion();
+}
+
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timeLeft = 40;
+  updateTimerUI();
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerUI();
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      isLocked = true;
+      showTimeoutLoseModal();
+    }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  let box = $("timer-box");
+  box.textContent = `⏱️ ${timeLeft}s`;
+  box.classList.toggle("warning", timeLeft <= 10);
+}
+
+function renderQuestion() {
+  selectedOption = null;
+  isLocked = false;
+  hiddenIndices = [];
+
+  let cur = gameQuestions[currentStep];
+
+  $("cat-tag").textContent = cur.c;
+  $("q-text").textContent = cur.q;
+
+  let container = $("opts-container");
+  container.innerHTML = cur.o.map((txt, i) => `
+    <button class="opt-btn" id="opt-${i}" onclick="selectOption(${i})">
+      <b>${LETTERS[i]}:</b> <span>${txt}</span>
+    </button>
+  `).join("");
+
+  $("btn-send").disabled = true;
+
+  $("ladder").innerHTML = SCORES.map((val, i) => `
+    <li class="ladder-item ${i < currentStep ? 'done' : i === currentStep ? 'active' : ''}">
+      <span>${i + 1}.</span> <span>${val} PTS</span>
+    </li>
+  `).join("");
+
+  startTimer();
+}
+
+function selectOption(idx) {
+  if (isLocked || hiddenIndices.includes(idx)) return;
+  selectedOption = idx;
+
+  document.querySelectorAll(".opt-btn").forEach((btn, i) => {
+    btn.classList.toggle("selected", i === idx);
+  });
+
+  $("btn-send").disabled = false;
+}
+
+function submitAnswer() {
+  if (selectedOption === null || isLocked) return;
+  isLocked = true;
+  clearInterval(timerInterval);
+  $("btn-send").disabled = true;
+
+  let cur = gameQuestions[currentStep];
+  let isOk = selectedOption === cur.a;
+  let selectedBtn = $("opt-" + selectedOption);
+
+  if (!isOk) {
+    selectedBtn.classList.remove("selected");
+    selectedBtn.classList.add("wrong");
+  }
+
+  setTimeout(() => {
+    let correctBtn = $("opt-" + cur.a);
+    if (correctBtn) {
+      correctBtn.classList.remove("selected");
+      correctBtn.classList.add("correct");
+    }
+  }, isOk ? 0 : 600);
+
+  setTimeout(() => {
+    if (isOk) {
+      showToast();
+      if (currentStep === 9) {
+        showWinModal();
+      } else {
+        currentStep++;
+        renderQuestion();
+      }
+    } else {
+      showLoseModal();
+    }
+  }, isOk ? 1500 : 2200);
+}
+
+function promptRetire() {
+  if (isLocked) return;
+  let earned = currentStep > 0 ? SCORES[currentStep - 1] : "0";
+
+  openModal(`
+    <h2 style="font-family:'Cinzel'; color:var(--gold-primary); font-size:24px; margin-bottom:15px;">DECISIÓN DE RETIRO</h2>
+    <p style="font-size:16px; line-height:1.5; margin-bottom:20px;">
+      ¿Estás seguro de que deseas retirarte de la competencia y asegurar <b style="color:var(--gold-primary); font-size:20px;">${earned} PUNTOS</b>?
+    </p>
+    <div style="display:flex; gap:15px; justify-content:center;">
+      <button class="btn-retire" style="font-size:15px;" onclick="confirmRetire('${earned}')">SÍ, RETIRARME</button>
+      <button class="btn-confirm" onclick="closeModal()">CONTINUAR JUGANDO</button>
+    </div>
+  `);
+}
+
+function confirmRetire(earned) {
+  clearInterval(timerInterval);
+  openModal(`
+    <h2 style="font-family:'Cinzel'; color:var(--gold-primary); font-size:26px;">¡TE HAS RETIRADO!</h2>
+    <p style="margin:15px 0; font-size:16px;">Tomaste una buena decisión estratégica y te retiras con:</p>
+    <div style="font-family:'Cinzel'; font-size:32px; color:var(--gold-primary); font-weight:900; margin-bottom:20px;">${earned} PUNTOS</div>
+    <button class="btn-start" style="font-size:16px; padding:10px 30px;" onclick="startGame()">NUEVO JUEGO</button>
+  `);
+}
+
+function showToast() {
+  let toast = $("feedback");
+  let randomText = PRAISES[Math.floor(Math.random() * PRAISES.length)];
+  toast.textContent = randomText;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 1200);
+}
+
+function use5050() {
+  if (isLocked || lifelinesUsed.f) return;
+  lifelinesUsed.f = true;
+  $("btn-50").disabled = true;
+
+  let cur = gameQuestions[currentStep];
+  let wrongIndices = [0, 1, 2, 3].filter(i => i !== cur.a);
+  let toHide = shuffle(wrongIndices).slice(0, 2);
+
+  toHide.forEach(i => {
+    hiddenIndices.push(i);
+    let btn = $("opt-" + i);
+    if (btn) btn.classList.add("hidden-50");
+  });
+
+  if (hiddenIndices.includes(selectedOption)) {
+    selectedOption = null;
+    $("btn-send").disabled = true;
+  }
+}
+
+function useAudience() {
+  if (isLocked || lifelinesUsed.a) return;
+  lifelinesUsed.a = true;
+  $("btn-aud").disabled = true;
+
+  let cur = gameQuestions[currentStep];
+  let mainPct = Math.floor(Math.random() * 15) + 65;
+  let remaining = 100 - mainPct;
+
+  let pcts = [0, 0, 0, 0];
+  pcts[cur.a] = mainPct;
+
+  let alive = [0, 1, 2, 3].filter(i => i !== cur.a && !hiddenIndices.includes(i));
+  alive.forEach((idx, k) => {
+    if (k === alive.length - 1) pcts[idx] = remaining;
+    else {
+      let val = Math.floor(Math.random() * remaining);
+      pcts[idx] = val;
+      remaining -= val;
+    }
+  });
+
+  openModal(`
+    <h2 style="font-family:'Cinzel'; color:var(--gold-primary); margin-bottom:15px;">👥 Votación de la Audiencia</h2>
+    <div style="display:flex; justify-content:space-around; align-items:flex-end; height:150px; margin:20px 0;">
+      ${[0, 1, 2, 3].map(i => `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:8px; height:100%; justify-content:flex-end;">
+          <b style="color:var(--blue-glow);">${pcts[i]}%</b>
+          <div style="width:35px; background:linear-gradient(180deg, var(--gold-primary), #995c00); height:${pcts[i]}%; border-radius:5px 5px 0 0; transition: height 1s ease;"></div>
+          <b>${LETTERS[i]}</b>
+        </div>
+      `).join("")}
+    </div>
+    <button class="btn-confirm" onclick="closeModal()">VOLVER AL JUEGO</button>
+  `);
+}
+
+function usePhone() {
+  if (isLocked || lifelinesUsed.t) return;
+  lifelinesUsed.t = true;
+  $("btn-tel").disabled = true;
+
+  let cur = gameQuestions[currentStep];
+
+  openModal(`
+    <h2 style="font-family:'Cinzel'; color:var(--gold-primary);">📞 Consulta con el Experto</h2>
+    <div style="font-size:50px; margin:15px 0;">🎓</div>
+    <p style="font-size:15px; line-height:1.5; background:rgba(255,255,255,0.1); padding:15px; border-radius:12px; margin-bottom:20px;">
+      "Analizando el tema de la pregunta, ten en cuenta la siguiente pista clave: <br><br><b style="color:var(--gold-primary);">${cur.h}</b>"
+    </p>
+    <button class="btn-confirm" onclick="closeModal()">ENTENDIDO</button>
+  `);
+}
+
+function showLoseModal() {
+  let earned = currentStep > 0 ? SCORES[currentStep - 1] : "0";
+  let cur = gameQuestions[currentStep];
+
+  openModal(`
+    <h2 style="font-family:'Cinzel'; color:var(--red-bad); font-size:26px;">¡RESPUESTA INCORRECTA!</h2>
+    <p style="margin:12px 0; font-size:15px;">Fallaste en la <b>Pregunta ${currentStep + 1}</b> y te llevas:</p>
+    <div style="font-family:'Cinzel'; font-size:28px; color:var(--gold-primary); font-weight:900; margin-bottom:12px;">${earned} PUNTOS</div>
+    <p style="font-size:13px; opacity:0.8; margin-bottom:18px;">La respuesta correcta era:<br><b style="color:#fff;">${cur.o[cur.a]}</b></p>
+    <button class="btn-start" style="font-size:16px; padding:10px 30px;" onclick="startGame()">REINTENTAR RETO</button>
+  `);
+}
+
+function showTimeoutLoseModal() {
+  let earned = currentStep > 0 ? SCORES[currentStep - 1] : "0";
+
+  openModal(`
+    <h2 style="font-family:'Cinzel'; color:var(--red-bad); font-size:26px;">¡TIEMPO AGOTADO!</h2>
+    <p style="margin:12px 0; font-size:15px;">Se cumplieron los 40 segundos sin responder. Te llevas:</p>
+    <div style="font-family:'Cinzel'; font-size:28px; color:var(--gold-primary); font-weight:900; margin-bottom:18px;">${earned} PUNTOS</div>
+    <button class="btn-start" style="font-size:16px; padding:10px 30px;" onclick="startGame()">VOLVER A INTENTAR</button>
+  `);
+}
+
+function showWinModal() {
+  triggerConfetti();
+  openModal(`
+    <div class="check-card">
+      <h2>🏆 CHEQUE DE EXCELENCIA ACADÉMICA 🏆</h2>
+      <div class="check-payee">Páguese a la orden de:</div>
+      <div class="check-name">Campeón(a) del Quiz Millonario</div>
+      <div class="check-amount-box">50.000 PUNTOS</div>
+      
+      <div class="academic-reward">
+        🎓 BONIFICACIÓN ACADÉMICA:<br>
+        <b>¡Te ganaste +1.0 Unidad en la materia escogida por la profesora!</b>
+      </div>
+
+      <div class="check-signature-area">
+        <div class="check-sig">Millonario Quiz</div>
+        <div class="check-seal">🏅</div>
+      </div>
+    </div>
+    <button class="btn-start" style="font-size:16px; padding:10px 30px;" onclick="startGame()">JUGAR DE NUEVO</button>
+  `);
+}
+
+function openModal(html) {
+  $("modal-content").innerHTML = html;
+  $("modal").classList.remove("hide");
+}
+
+function closeModal() {
+  $("modal").classList.add("hide");
+}
+
+function triggerConfetti() {
+  let canvas = $("confetti-canvas");
+  let ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let pieces = [];
+  let colors = ['#ffd700', '#46d6ff', '#ff2a6d', '#00e676', '#ffffff'];
+
+  for (let i = 0; i < 120; i++) {
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      size: Math.random() * 10 + 5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      speed: Math.random() * 5 + 2,
+      rotation: Math.random() * 360
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+      ctx.restore();
+
+      p.y += p.speed;
+      p.rotation += 0.05;
+
+      if (p.y > canvas.height) p.y = -20;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+</script>
+</body>
+</html>
